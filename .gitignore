@@ -37,5 +37,4 @@ CMakeLists.txt.user
 *.reflectable.dart
 
 # custom
-build
-build-*
+build/

@@ -45,3 +45,10 @@ CPMAddPackage(
 add_executable(test main-yasio.cpp)
 target_link_libraries(test yasio yasio_http)
 target_link_libraries(test mbedtls)
+
+if(IOS)
+    set_target_properties(test PROPERTIES
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER com.example.myapp
+        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
+    )
+endif()
