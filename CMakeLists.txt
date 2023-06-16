@@ -28,12 +28,18 @@ include(cmake/CPM.cmake)
 set(YASIO_VERSION 3.39.11)
 set(YASIO_VERSION dev)
 
+set(YASIO_SSL_BACKEND 2)
+
+if("${PLATFORM}" MATCHES "^WATCHOS")
+    set(YASIO_SSL_BACKEND 0)
+endif()
+
 CPMAddPackage(
   NAME yasio
   GITHUB_REPOSITORY yasio/yasio
   GIT_TAG ${YASIO_VERSION}
   OPTIONS
-        "YASIO_SSL_BACKEND 2"
+        "YASIO_SSL_BACKEND ${YASIO_SSL_BACKEND}"
         "YASIO_BUILD_EXT_HTTP YES"
         "YASIO_BUILD_WITH_LUA NO"
         "YASIO_BUILD_WITH_CCLUA NO"
@@ -44,7 +50,10 @@ CPMAddPackage(
 
 add_executable(test main-yasio.cpp)
 target_link_libraries(test yasio yasio_http)
-target_link_libraries(test mbedtls)
+
+if(NOT "${PLATFORM}" MATCHES "^WATCHOS")
+    target_link_libraries(test mbedtls)
+endif()
 
 if(IOS)
     set_target_properties(test PROPERTIES
