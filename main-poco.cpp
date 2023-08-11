@@ -8,36 +8,41 @@
 #include <Poco/Exception.h>
 #include <sstream>
 
-int main() {
-    try {
-        // Criar a URI do destino
-        Poco::URI uri("https://reqbin.com/echo");
+int main()
+{
+    try
+    {
+        // create the destination URI
+        poco::uri uri("https://httpbin.org/anything");
 
-        // Criar uma sessão de cliente HTTPS
-        Poco::Net::HTTPSClientSession session(uri.getHost(), uri.getPort());
+        // create an HTTPS client session
+        poco::net::httpsclientsession session(uri.gethost(), uri.getport());
 
-        // Preparar uma solicitação HTTP GET
-        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, uri.getPathAndQuery(), Poco::Net::HTTPMessage::HTTP_1_1);
-        request.set("User-Agent", "MyApp");
+        // prepare an HTTP GET request
+        poco::net::httprequest request(poco::net::httprequest::http_get, uri.getpathandquery(), poco::net::httpmessage::http_1_1);
+        request.set("user-agent", "myapp");
 
-        // Enviar a solicitação HTTP
-        session.sendRequest(request);
+        // send the HTTP request
+        session.sendrequest(request);
 
-        // Obter a resposta HTTP
-        Poco::Net::HTTPResponse response;
+        // get the HTTP response
+        poco::net::httpresponse response;
 
-        // Ler e imprimir o cabeçalho da resposta
-        std::cout << "Status: " << response.getStatus() << " " << response.getReason() << std::endl;
-        for (const auto& header : response) {
+        // read and print the response header
+        std::cout << "status: " << response.getstatus() << " " << response.getreason() << std::endl;
+        for (const auto &header : response)
+        {
             std::cout << header.first << ": " << header.second << std::endl;
         }
 
-        // Ler e imprimir o corpo da resposta
-        std::stringstream responseBody;
-        Poco::StreamCopier::copyStream(session.receiveResponse(response), responseBody);
-        std::cout << "Body:\n" << responseBody.str() << std::endl;
+        // read and print the response body
+        std::stringstream responsebody;
+        poco::streamcopier::copystream(session.receiveresponse(response), responsebody);
+        std::cout << "body:\n"
+                  << responsebody.str() << std::endl;
     }
-    catch (Poco::Exception& ex) {
+    catch (Poco::Exception &ex)
+    {
         std::cerr << "Error: " << ex.displayText() << std::endl;
         return 1;
     }

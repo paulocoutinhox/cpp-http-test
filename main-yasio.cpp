@@ -14,43 +14,51 @@ using namespace yasio_ext::network;
 
 void yasioTest()
 {
-  auto httpClient = HttpClient::getInstance();
-  httpClient->setDispatchOnWorkThread(true);
+    auto httpClient = HttpClient::getInstance();
+    httpClient->setDispatchOnWorkThread(true);
 
-  auto request = new HttpRequest();
+    auto request = new HttpRequest();
 
-  request->setHeaders(std::vector<std::string>{CHROME_UA});
-  request->setUrl("https://reqbin.com/echo");
-  request->setRequestType(HttpRequest::Type::Get);
+    request->setHeaders(std::vector<std::string>{CHROME_UA});
+    request->setUrl("https://httpbin.org/anything");
+    request->setRequestType(HttpRequest::Type::Get);
 
-  auto response = httpClient->sendSync(request);
-  request->release();
+    auto response = httpClient->sendSync(request);
+    request->release();
 
-  if (response)
-  {
-    if (response->getResponseCode() == 200)
+    if (response)
     {
-      auto responseData = response->getResponseData();
-      // fwrite(responseData->data(), responseData->size(), 1, stdout);
-      printf("===>request succeed\n");
+        if (response->getResponseCode() == 200)
+        {
+            auto responseData = response->getResponseData();
+            // fwrite(responseData->data(), responseData->size(), 1, stdout);
+            printf("===>request succeed\n");
+        }
+        else
+        {
+            printf("===>request failed with %d\n", response->getResponseCode());
+        }
+
+        printf("%s", "===>response headers:\n");
+
+        for (auto &header : response->getResponseHeaders())
+        {
+            printf("\t%s: %s\n", header.first.c_str(), header.second.c_str());
+        }
+
+        response->release();
     }
-    else
-      printf("===>request failed with %d\n", response->getResponseCode());
-    printf("%s", "===>response headers:\n");
-    for (auto& header : response->getResponseHeaders())
-      printf("\t%s: %s\n", header.first.c_str(), header.second.c_str());
-    response->release();
-  }
-  HttpClient::destroyInstance();
+
+    HttpClient::destroyInstance();
 }
 
-int main(int, char**)
+int main(int, char **)
 {
 #if defined(_WIN32)
-  SetConsoleOutputCP(CP_UTF8);
+    SetConsoleOutputCP(CP_UTF8);
 #endif
 
-  yasioTest();
+    yasioTest();
 
-  return 0;
+    return 0;
 }
